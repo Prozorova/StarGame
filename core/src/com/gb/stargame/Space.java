@@ -31,12 +31,12 @@ public class Space {
         Star() {
             texture = textureStar[MathUtils.random(1)];
             position = new Vector2(MathUtils.random(0, x), MathUtils.random(0, y));
-            scale = MathUtils.random(0.3f, 1f);
+            scale = (x + y) / 1000 * MathUtils.random(0.3f, 1f);
         }
     }
 
     public void render(SpriteBatch batch) {
-        batch.draw(textureSpace, 0, 0);
+        batch.draw(textureSpace, 0, 0, x, y);
         float scale;
         for (int i = 0; i < stars.length; i++) {
             if (MathUtils.random(0, 300) < 1) {
