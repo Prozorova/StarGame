@@ -3,11 +3,12 @@ package com.gb.stargame.screen;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.gb.stargame.base.*;
 
 public class MainScreen extends Base2DScreen {
-    private SpriteBatch batch;
+    private Space space;
+    private StarShip ship;
 
     public MainScreen(Game game) {
         super(game);
@@ -15,9 +16,16 @@ public class MainScreen extends Base2DScreen {
 
     @Override
     public void show() {
-        batch = new SpriteBatch();
-        space = new Space();
-        ship = new StarShip();
+        super.show();
+        space = new Space(coordY, coordY, getScale());
+        ship = new StarShip(coordY, coordY, getScale());
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        super.resize(width, height);
+        space.setXY(worldBounds.getWidth(), worldBounds.getHeight(), worldBounds.getWidth());
+        ship.setXY(worldBounds.getWidth(), worldBounds.getHeight(), worldBounds.getWidth());
     }
 
     @Override
@@ -78,14 +86,14 @@ public class MainScreen extends Base2DScreen {
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        ship.move(screenX, y - screenY);
-        return false;
+    public void touchDown(Vector2 touch, int pointer) {
+        ship.move(touch.x, touch.y);
     }
 
     @Override
     public void dispose() {
-        batch.dispose();
+        space.dispose();
+        ship.dispose();
         super.dispose();
     }
 }
