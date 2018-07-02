@@ -1,12 +1,15 @@
 package com.gb.stargame.base;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
-import com.gb.stargame.math.*;
+import com.gb.stargame.base.math.*;
+import com.gb.stargame.screen.MainScreen;
 
 public class Base2DScreen implements Screen, InputProcessor {
-    protected final float coordY = 42f;
+    protected Texture textureSpace;
+    protected final float coordY = 1f;
     protected SpriteBatch batch;
 
     private Rect screenBounds; // границы экрана в пикселях
@@ -39,7 +42,7 @@ public class Base2DScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
-
+        textureSpace = new Texture("galaxy-st.jpg");
     }
 
     @Override
@@ -83,6 +86,7 @@ public class Base2DScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
+        textureSpace.dispose();
         batch.dispose();
     }
 
@@ -119,7 +123,7 @@ public class Base2DScreen implements Screen, InputProcessor {
         return false;
     }
 
-    private void touchUp(Vector2 touch, int pointer) {
+    public void touchUp(Vector2 touch, int pointer) {
         System.out.println("touchUp X=" + touch.x + " Y=" + touch.y);
     }
 
@@ -142,5 +146,9 @@ public class Base2DScreen implements Screen, InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         return false;
+    }
+
+    public void setScreen(){
+        game.setScreen(new MainScreen(game));
     }
 }

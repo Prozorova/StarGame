@@ -6,7 +6,7 @@ import com.gb.stargame.screen.*;
 public class StarGame extends Game {
 	@Override
 	public void create() {
-		setScreen(new MainScreen(this));
+		setScreen(new MenuScreen(this));
 	}
 }
 

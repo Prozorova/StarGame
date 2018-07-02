@@ -2,13 +2,18 @@ package com.gb.stargame.screen;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.gb.stargame.base.*;
+import com.gb.stargame.base.sprites.Space;
+import com.gb.stargame.base.sprites.StarShip;
 
 public class MainScreen extends Base2DScreen {
     private Space space;
     private StarShip ship;
+    private Texture textureShip;
+    private Texture[] textureStar;
 
     public MainScreen(Game game) {
         super(game);
@@ -17,15 +22,17 @@ public class MainScreen extends Base2DScreen {
     @Override
     public void show() {
         super.show();
-        space = new Space(coordY, coordY, getScale());
-        ship = new StarShip(coordY, coordY, getScale());
+        textureStar = new Texture[]{new Texture("starBlue.png"), new Texture("starYellow.png")};
+        space = new Space(new TextureRegion(textureSpace), textureStar, worldBounds);
+        textureShip = new Texture("ship.png");
+        ship = new StarShip(new TextureRegion(textureShip), worldBounds);
     }
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
-        space.setXY(worldBounds.getWidth(), worldBounds.getHeight(), worldBounds.getWidth());
-        ship.setXY(worldBounds.getWidth(), worldBounds.getHeight(), worldBounds.getWidth());
+        space.resize(worldBounds);
+        ship.resize(worldBounds);
     }
 
     @Override
@@ -34,8 +41,8 @@ public class MainScreen extends Base2DScreen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        space.render(batch);
-        ship.render(batch);
+        space.draw(batch);
+        ship.draw(batch);
         batch.end();
     }
 
@@ -44,19 +51,19 @@ public class MainScreen extends Base2DScreen {
         switch (keycode) {
             case 51:
             case 19:
-                ship.move(StarShip.Direction.UP, true);
+                ship.move(com.gb.stargame.base.sprites.StarShip.Direction.UP, true);
                 break;
             case 47:
             case 20:
-                ship.move(StarShip.Direction.DOWN, true);
+                ship.move(com.gb.stargame.base.sprites.StarShip.Direction.DOWN, true);
                 break;
             case 29:
             case 21:
-                ship.move(StarShip.Direction.LEFT, true);
+                ship.move(com.gb.stargame.base.sprites.StarShip.Direction.LEFT, true);
                 break;
             case 32:
             case 22:
-                ship.move(StarShip.Direction.RIGHT, true);
+                ship.move(com.gb.stargame.base.sprites.StarShip.Direction.RIGHT, true);
                 break;
         }
         return false;
@@ -67,15 +74,15 @@ public class MainScreen extends Base2DScreen {
         switch (keycode) {
             case 51:
             case 19:
-                ship.move(StarShip.Direction.UP, false);
+                ship.move(com.gb.stargame.base.sprites.StarShip.Direction.UP, false);
                 break;
             case 47:
             case 20:
-                ship.move(StarShip.Direction.DOWN, false);
+                ship.move(com.gb.stargame.base.sprites.StarShip.Direction.DOWN, false);
                 break;
             case 29:
             case 21:
-                ship.move(StarShip.Direction.LEFT, false);
+                ship.move(com.gb.stargame.base.sprites.StarShip.Direction.LEFT, false);
                 break;
             case 32:
             case 22:
@@ -87,13 +94,12 @@ public class MainScreen extends Base2DScreen {
 
     @Override
     public void touchDown(Vector2 touch, int pointer) {
-        ship.move(touch.x, touch.y);
+        ship.move(touch);
     }
 
     @Override
     public void dispose() {
-        space.dispose();
-        ship.dispose();
+        for (Texture txt : textureStar) txt.dispose();
         super.dispose();
     }
 }
