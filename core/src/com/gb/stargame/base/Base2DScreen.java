@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
 import com.gb.stargame.base.math.*;
-import com.gb.stargame.screen.MainScreen;
 
 public class Base2DScreen implements Screen, InputProcessor {
     protected Texture textureSpace;
@@ -21,7 +20,7 @@ public class Base2DScreen implements Screen, InputProcessor {
 
     private Vector2 touch = new Vector2();
 
-    private Game game;
+    protected Game game;
     private float scale;
 
     public Base2DScreen(Game game) {
@@ -140,15 +139,16 @@ public class Base2DScreen implements Screen, InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        touch.set(screenX, screenBounds.getHeight() - screenY).mul(screenToWorld);
+        mouseMoved(touch);
         return false;
+    }
+
+    public void mouseMoved(Vector2 v) {
     }
 
     @Override
     public boolean scrolled(int amount) {
         return false;
-    }
-
-    public void setScreen(){
-        game.setScreen(new MainScreen(game));
     }
 }

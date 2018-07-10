@@ -1,26 +1,68 @@
 
 menuAtlas.png
 format: RGBA8888
-filter: MipMapLinearNearest,Linear
+filter: Nearest,Nearest
 repeat: none
-btPlay
+stargame_logo
   rotate: false
-  xy: 8, 268
-  size: 234, 256
-  orig: 234, 256
+  xy: 1, 357
+  size: 415, 121
+  orig: 415, 121
   offset: 0, 0
   index: -1
-btExit
+EXIT1
   rotate: false
-  xy: 8, 26
-  size: 234, 234
-  orig: 234, 234
+  xy: 1, 268
+  size: 246, 87
+  orig: 246, 87
   offset: 0, 0
   index: -1
-star
+EXIT2
   rotate: false
-  xy: 8, 8
-  size: 11, 10
-  orig: 11, 10
+  xy: 1, 179
+  size: 246, 87
+  orig: 246, 87
+  offset: 0, 0
+  index: -1
+OPTIONS1
+  rotate: false
+  xy: 1, 90
+  size: 246, 87
+  orig: 246, 87
+  offset: 0, 0
+  index: -1
+OPTIONS2
+  rotate: false
+  xy: 1, 1
+  size: 246, 87
+  orig: 246, 87
+  offset: 0, 0
+  index: -1
+PLAY1
+  rotate: false
+  xy: 249, 268
+  size: 246, 87
+  orig: 246, 87
+  offset: 0, 0
+  index: -1
+PLAY2
+  rotate: false
+  xy: 249, 179
+  size: 246, 87
+  orig: 246, 87
+  offset: 0, 0
+  index: -1
+SCORE1
+  rotate: false
+  xy: 249, 90
+  size: 246, 87
+  orig: 246, 87
+  offset: 0, 0
+  index: -1
+SCORE2
+  rotate: false
+  xy: 249, 1
+  size: 246, 87
+  orig: 246, 87
   offset: 0, 0
   index: -1

@@ -1,6 +1,5 @@
 package com.gb.stargame.base.sprites;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -18,9 +17,10 @@ public class StarShip extends Sprite {
     private boolean movingX, movingY;
     private Vector2 delta;
     private Vector2 checkSpeed;
+    private boolean braking;
 
     public StarShip(TextureRegion tShip, Rect worldBounds) {
-        super(tShip);
+        super(tShip, 1, 2, 2);
         this.worldBounds = worldBounds;
         touchPosition = new Vector2(-1, -100);
         changeX = 1f;
@@ -29,7 +29,7 @@ public class StarShip extends Sprite {
         movingX = movingY = false;
         buff = new Vector2();
         coef = 0.0003f;
-        checkSpeed = new Vector2(100,100);
+        checkSpeed = new Vector2(100, 100);
     }
 
     @Override
@@ -42,13 +42,14 @@ public class StarShip extends Sprite {
         if (!isMe(touched)) {
             touchPosition.set(touched);
             movingX = movingY = true;
+            braking = false;
             updateDelta();
         }
     }
 
     public void move(Direction direction, boolean moving) {
         touchPosition.set(-1, -100);
-        checkSpeed = new Vector2(100,100);
+        checkSpeed = new Vector2(100, 100);
         int a = (moving) ? 1 : -1;
         switch (direction) {
             case DOWN:
@@ -86,6 +87,17 @@ public class StarShip extends Sprite {
             delta.y = 0f;
         }
         if (!touchPosition.epsilonEquals(-1, -100)) {
+            boolean cond = speed.len() > maxSpeed / 3;
+            if (braking && cond) {
+                return;
+            } else if (braking && !cond) {
+                braking = false;
+            }
+            if (!braking && Math.abs(speed.angle(delta)) > 90 && cond) {
+                delta.set(speed).scl(-0.3f);
+                braking = true;
+                return;
+            }
             buff.set(touchPosition);
             if (buff.sub(pos).len() < getHalfHeight()) {
                 movingY = false;
@@ -121,8 +133,8 @@ public class StarShip extends Sprite {
                 else speed.set(a * maxSpeed * ratio, b * maxSpeed);
             }
         } else {
-            if (Math.abs(speed.x) > Math.abs(checkSpeed.x)) delta.x *=-1;
-            if (Math.abs(speed.y) > Math.abs(checkSpeed.y)) delta.y *=-1;
+            if (Math.abs(speed.x) > Math.abs(checkSpeed.x)) delta.x *= -1;
+            if (Math.abs(speed.y) > Math.abs(checkSpeed.y)) delta.y *= -1;
         }
     }
 
@@ -138,6 +150,6 @@ public class StarShip extends Sprite {
         pos.x = pos.x * worldBounds.getWidth() / changeX;
         setHeightProportion(worldBounds.getHeight() * 0.09f);
         changeX = worldBounds.getWidth();
-        maxSpeed = 0.009f;
+        maxSpeed = 0.01f;
     }
 }

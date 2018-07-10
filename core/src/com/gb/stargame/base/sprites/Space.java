@@ -27,8 +27,8 @@ public class Space extends Sprite {
         Star(TextureRegion texture, float starScale) {
             super(new TextureRegion(texture), starScale, MathUtils.random(0, 180));
             setHeightProportion(scale);
-            pos.set(MathUtils.random(worldBounds.getLeft(), worldBounds.getRight() - getHalfWidth()), MathUtils.random(worldBounds.getBottom(), worldBounds.getHeight()));
-            speed = 0.03f * starScale;
+            pos.set(MathUtils.random(worldBounds.getLeft(), worldBounds.getRight()), MathUtils.random(worldBounds.getBottom(), worldBounds.getHeight()));
+            speed = 0.02f * starScale;
         }
 
         @Override
@@ -41,8 +41,7 @@ public class Space extends Sprite {
         public void update() {
             setBottom(getBottom() - speed);
             if (getTop() < worldBounds.getBottom()) {
-                setBottom(worldBounds.getTop());
-                setLeft(MathUtils.random(worldBounds.getLeft(), worldBounds.getRight() - getHalfWidth()));
+                pos.set(MathUtils.random(worldBounds.getLeft(), worldBounds.getRight()), worldBounds.getTop() + getHeight());
             }
         }
     }

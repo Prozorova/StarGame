@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.gb.stargame.base.math.Rect;
+import com.gb.stargame.base.utils.Regions;
 
 public abstract class Sprite extends Rect {
     protected float angle = 0f;
@@ -19,6 +20,13 @@ public abstract class Sprite extends Rect {
         regions[0] = region;
     }
 
+    public Sprite(TextureRegion[] region) {
+        if (region == null) {
+            throw new NullPointerException();
+        }
+        regions = region;
+    }
+
     public Sprite(TextureRegion region, float scale, float angle) {
         if (region == null) {
             throw new NullPointerException();
@@ -27,6 +35,13 @@ public abstract class Sprite extends Rect {
         regions[0] = region;
         setScale(scale);
         setAngle(angle);
+    }
+
+    public Sprite(TextureRegion region, int rows, int cols, int frames) {
+        if (region == null) {
+            throw new NullPointerException();
+        }
+        regions = Regions.split(region, rows, cols, frames);
     }
 
     public void draw(SpriteBatch batch) {
@@ -57,15 +72,22 @@ public abstract class Sprite extends Rect {
         setWidth(height * aspect);
     }
 
-    public void resize(Rect worldBounds) {
+    public void setWidthProportion(float width) {
+        setWidth(width);
+        float aspect = regions[frame].getRegionHeight() / (float) regions[frame].getRegionWidth();
+        setHeight(width * aspect);
+    }
 
+    public void resize(Rect worldBounds) {
+    }
+
+    public void resize(Rect worldBounds, int k) {
     }
 
     public void touchDown(Vector2 touch, int pointer) {
     }
 
     public void touchUp(Vector2 touch, int pointer) {
-
     }
 
     public void update() {

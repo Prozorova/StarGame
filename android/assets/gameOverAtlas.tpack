@@ -1,0 +1,26 @@
+
+gameOverAtlas.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+GameOver
+  rotate: false
+  xy: 1, 155
+  size: 507, 84
+  orig: 507, 84
+  offset: 0, 0
+  index: -1
+MainMenuButton1
+  rotate: false
+  xy: 1, 78
+  size: 500, 75
+  orig: 500, 75
+  offset: 0, 0
+  index: -1
+MainMenuButton2
+  rotate: false
+  xy: 1, 1
+  size: 500, 75
+  orig: 500, 75
+  offset: 0, 0
+  index: -1
