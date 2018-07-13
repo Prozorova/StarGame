@@ -100,6 +100,11 @@ public class Rect {
         return getLeft() > other.getRight() || getRight() < other.getLeft() || getBottom() > other.getTop() || getTop() < other.getBottom();
     }
 
+    public boolean isOutside2(Rect other) {                                                                             // серьезное столкновение с потерей корабля, в остальных случаях
+        return getLeft() + getHalfWidth() > other.getRight() || getRight() - getHalfWidth() < other.getLeft() ||        // теряется только часть здоровья
+                getBottom() + getHalfHeight() > other.getTop() || getTop() - getHalfHeight() < other.getBottom();
+    }
+
     @Override
     public String toString() {
         return "Rectangle: pos" + pos + " size(" + getWidth() + ", " + getHeight() + ")";

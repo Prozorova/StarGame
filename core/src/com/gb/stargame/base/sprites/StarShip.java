@@ -1,40 +1,47 @@
 package com.gb.stargame.base.sprites;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.gb.stargame.base.Sprite;
 import com.gb.stargame.base.math.Rect;
+import com.gb.stargame.base.math.ShipShape;
 
-public class StarShip extends Sprite {
-    private Rect worldBounds;
-    private float changeX;
+public class StarShip extends Ship {
     private Vector2 touchPosition;
     private Vector2 buff;
     private float maxSpeed;
     private float coef;
-    private Vector2 speed;
     private boolean movingX, movingY;
     private Vector2 delta;
     private Vector2 checkSpeed;
     private boolean braking;
+    private boolean autoFire;
+    private boolean fire;
 
-    public StarShip(TextureRegion tShip, Rect worldBounds) {
-        super(tShip, 1, 2, 2);
-        this.worldBounds = worldBounds;
+    public StarShip(TextureRegion tShip, TextureRegion tBullet, Sound shotSound, Rect worldBounds, boolean autoFire) {
+        super(tShip, 1, 2, 2, worldBounds);
+        this.bulletRegion = tBullet;
+        this.bulletHeight = 0.01f;
+        this.bulletV = 0.5f;
+        this.bulletDamage = 1;
+        this.reloadInterval = 0.2f;
+        this.shotSound = shotSound;
         touchPosition = new Vector2(-1, -100);
-        changeX = 1f;
         speed = new Vector2(0, 0);
         delta = new Vector2();
         movingX = movingY = false;
         buff = new Vector2();
         coef = 0.0003f;
         checkSpeed = new Vector2(100, 100);
+        health = 100;
+        this.autoFire = autoFire;
+        fire = false;
+        hitBox = new ShipShape(this.pos, this.getWidth(), this.getHeight(), ShipShape.HitBoxTypes.PLAYER);
     }
 
     @Override
     public void draw(SpriteBatch batch) {
-        update();
         super.draw(batch);
     }
 
@@ -71,7 +78,15 @@ public class StarShip extends Sprite {
         }
     }
 
-    public void update() {
+    @Override
+    public void update(float d) {
+        if (autoFire || fire) {
+            reloadTimer += d;
+            if (reloadTimer >= reloadInterval) {
+                reloadTimer = 0f;
+                shoot();
+            }
+        }
         updateSpeed();
         pos.add(speed);
         if (getLeft() > worldBounds.getRight()) setRight(worldBounds.getLeft());
@@ -86,6 +101,7 @@ public class StarShip extends Sprite {
             speed.y = 0f;
             delta.y = 0f;
         }
+        hitBox.update(this.pos);
         if (!touchPosition.epsilonEquals(-1, -100)) {
             boolean cond = speed.len() > maxSpeed / 3;
             if (braking && cond) {
@@ -143,13 +159,22 @@ public class StarShip extends Sprite {
         delta.set(buff.sub(pos).scl(coef * 15));
     }
 
+    public void fire() {
+        fire = true;
+    }
+
+    public void stopFire() {
+        fire = false;
+    }
+
     public enum Direction {LEFT, RIGHT, UP, DOWN}
 
     @Override
     public void resize(Rect worldBounds) {
+        super.resize(worldBounds);
         pos.x = pos.x * worldBounds.getWidth() / changeX;
-        setHeightProportion(worldBounds.getHeight() * 0.09f);
-        changeX = worldBounds.getWidth();
+        setHeightProportion(worldBounds.getHeight() * 0.1f);
         maxSpeed = 0.01f;
+        hitBox = new ShipShape(this.pos, this.getWidth(), this.getHeight(), ShipShape.HitBoxTypes.PLAYER);
     }
 }

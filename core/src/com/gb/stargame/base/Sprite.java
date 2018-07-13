@@ -7,10 +7,14 @@ import com.gb.stargame.base.math.Rect;
 import com.gb.stargame.base.utils.Regions;
 
 public abstract class Sprite extends Rect {
-    protected float angle = 0f;
+    private float angle = 0f;
     protected float scale = 1f;
-    protected TextureRegion[] regions;
+    public TextureRegion[] regions;
     protected int frame;
+    private boolean isDestroyed;
+
+    protected Sprite() {
+    }
 
     public Sprite(TextureRegion region) {
         if (region == null) {
@@ -66,13 +70,13 @@ public abstract class Sprite extends Rect {
         );
     }
 
-    public void setHeightProportion(float height) {
+    protected void setHeightProportion(float height) {
         setHeight(height);
         float aspect = regions[frame].getRegionWidth() / (float) regions[frame].getRegionHeight();
         setWidth(height * aspect);
     }
 
-    public void setWidthProportion(float width) {
+    protected void setWidthProportion(float width) {
         setWidth(width);
         float aspect = regions[frame].getRegionHeight() / (float) regions[frame].getRegionWidth();
         setHeight(width * aspect);
@@ -84,14 +88,14 @@ public abstract class Sprite extends Rect {
     public void resize(Rect worldBounds, int k) {
     }
 
-    public void touchDown(Vector2 touch, int pointer) {
+    public boolean touchDown(Vector2 touch, int pointer) {
+        return false;
     }
 
     public void touchUp(Vector2 touch, int pointer) {
     }
 
-    public void update() {
-
+    public void update(float delta) {
     }
 
     public float getAngle() {
@@ -108,5 +112,17 @@ public abstract class Sprite extends Rect {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public void destroy() {
+        this.isDestroyed = true;
+    }
+
+    public void flushDestroy() {
+        this.isDestroyed = false;
+    }
+
+    public boolean isDestroyed() {
+        return isDestroyed;
     }
 }

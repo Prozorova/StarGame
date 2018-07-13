@@ -1,11 +1,11 @@
 package com.gb.stargame.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.gb.stargame.base.Base2DScreen;
+import com.gb.stargame.base.ScreenManager;
 import com.gb.stargame.base.sprites.MainMenu;
 import com.gb.stargame.base.sprites.ScaledTouchUpButton;
 import com.gb.stargame.base.utils.ActionListener;
@@ -17,12 +17,7 @@ public class MenuScreen extends Base2DScreen implements ActionListener {
     static final float PRESS_SCALE = 0.9f;
     private static final int BUTTON_AMOUNT = 4;
 
-    private ScaledTouchUpButton[] buttons;
-
-    public MenuScreen(Game game) {
-        super(game);
-        buttons = new ScaledTouchUpButton[BUTTON_AMOUNT];
-    }
+    private ScaledTouchUpButton[] buttons = new ScaledTouchUpButton[BUTTON_AMOUNT];
 
     @Override
     public void show() {
@@ -51,7 +46,7 @@ public class MenuScreen extends Base2DScreen implements ActionListener {
         batch.end();
     }
 
-    public void draw() {
+    private void draw() {
         for (ScaledTouchUpButton button : buttons)
             button.draw(batch);
     }
@@ -87,7 +82,6 @@ public class MenuScreen extends Base2DScreen implements ActionListener {
     @Override
     public void dispose() {
         atlas.dispose();
-        super.dispose();
     }
 
     @Override
@@ -95,7 +89,7 @@ public class MenuScreen extends Base2DScreen implements ActionListener {
         if (src == buttons[3]) {
             Gdx.app.exit();
         } else if (src == buttons[0]) {
-            game.setScreen(new MainScreen(game));
+            screenManager.switchScreens(ScreenManager.ScreenType.GAME);
         } else {
             System.out.println("Пока нет реализации");
 //            throw new RuntimeException("Unknown src");

@@ -1,16 +1,14 @@
 package com.gb.stargame.base;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
 import com.gb.stargame.base.math.*;
 
-public class Base2DScreen implements Screen, InputProcessor {
-    protected Texture textureSpace;
-    protected final float coordY = 1f;
-    protected SpriteBatch batch;
-
+public abstract class Base2DScreen implements Screen, InputProcessor {
+    private final float coordY = 1f;
     private Rect screenBounds; // границы экрана в пикселях
     protected Rect worldBounds; // границы проэкции мировых координат
     private Rect glBounds; // gl-левские координаты
@@ -20,33 +18,32 @@ public class Base2DScreen implements Screen, InputProcessor {
 
     private Vector2 touch = new Vector2();
 
-    protected Game game;
-    private float scale;
+    protected static ScreenManager screenManager = ScreenManager.getInstance();
+    protected static SpriteBatch batch = new SpriteBatch();
+    protected static Music music = Gdx.audio.newMusic(Gdx.files.internal("backgroundMusic.mp3"));
+    protected static Texture textureSpace = new Texture("galaxy-st.jpg");
 
-    public Base2DScreen(Game game) {
-        this.game = game;
+    protected static boolean autoFire = false;                          // автоогонь - будет включаться в настройках
+    protected static boolean fireButtonPlace = false;                   // справа - false, слева - true
+
+    public Base2DScreen() {
+        music.setVolume(0.3f);
+        music.play();
+        music.setLooping(true);
         screenBounds = new Rect();
         worldBounds = new Rect();
         glBounds = new Rect(0, 0, 1f, 1f);
         worldToGl = new Matrix4();
         screenToWorld = new Matrix3();
-        Gdx.input.setInputProcessor(this);
-        batch = new SpriteBatch();
-        scale = ((Gdx.graphics.getWidth() + Gdx.graphics.getHeight()) / 3000f + 0.75f) * coordY;
-    }
-
-    protected float getScale() {
-        return scale;
     }
 
     @Override
     public void show() {
-        textureSpace = new Texture("galaxy-st.jpg");
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
     public void render(float delta) {
-
     }
 
     @Override
@@ -61,7 +58,6 @@ public class Base2DScreen implements Screen, InputProcessor {
         batch.setProjectionMatrix(worldToGl);
         MatrixUtils.calcTransitionMatrix(screenToWorld, screenBounds, worldBounds);
         resize(worldBounds);
-        scale = ((width + height) / 3000f + 0.75f) * coordY;
     }
 
     private void resize(Rect worldBounds) {
@@ -86,6 +82,7 @@ public class Base2DScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
         textureSpace.dispose();
+        music.dispose();
         batch.dispose();
     }
 

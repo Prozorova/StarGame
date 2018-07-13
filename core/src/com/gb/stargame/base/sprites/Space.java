@@ -38,7 +38,7 @@ public class Space extends Sprite {
         }
 
         @Override
-        public void update() {
+        public void update(float delta) {
             setBottom(getBottom() - speed);
             if (getTop() < worldBounds.getBottom()) {
                 pos.set(MathUtils.random(worldBounds.getLeft(), worldBounds.getRight()), worldBounds.getTop() + getHeight());
@@ -54,7 +54,7 @@ public class Space extends Sprite {
             if (MathUtils.random(0, 300) < 1) {
                 randScale = star.getScale() * MathUtils.random(1.5f, 3f);
             } else randScale = star.getScale();
-            star.update();
+            star.update(1f);
             star.draw(batch, randScale);
         }
     }

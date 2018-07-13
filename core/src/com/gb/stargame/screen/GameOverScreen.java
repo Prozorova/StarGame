@@ -1,12 +1,12 @@
 package com.gb.stargame.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.gb.stargame.base.Base2DScreen;
+import com.gb.stargame.base.ScreenManager;
 import com.gb.stargame.base.sprites.*;
 import com.gb.stargame.base.utils.ActionListener;
 
@@ -14,10 +14,6 @@ public class GameOverScreen extends Base2DScreen implements ActionListener {
     private MainMenu mainMenu;
     private TextureAtlas atlas;
     private ScaledTouchUpButton toMainMenuButton;
-
-    public GameOverScreen(Game game) {
-        super(game);
-    }
 
     @Override
     public void show() {
@@ -40,7 +36,7 @@ public class GameOverScreen extends Base2DScreen implements ActionListener {
         batch.end();
     }
 
-    public void draw() {
+    private void draw() {
         toMainMenuButton.draw(batch);
     }
 
@@ -71,15 +67,10 @@ public class GameOverScreen extends Base2DScreen implements ActionListener {
     @Override
     public void dispose() {
         atlas.dispose();
-        super.dispose();
     }
 
     @Override
     public void actionPerformed(Object src) {
         if (src == toMainMenuButton)
-            game.setScreen(new MenuScreen(game));     //не работает на десктопе:
-//                                                      A fatal error has been detected by the Java Runtime Environment:
-//                                                      EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x00007ffa4e9455d7, pid=11668, tid=0x0000000000000ee0
-//            Gdx.app.exit();
-    }
+            screenManager.switchScreens(ScreenManager.ScreenType.MENU);    }
 }
