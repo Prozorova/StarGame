@@ -15,6 +15,7 @@ public class MainMenu extends Sprite {
 
     @Override
     public void resize(Rect worldBounds) {
+        super.resize(worldBounds);
         setHeightProportion(worldBounds.getHeight());
         pos.set(worldBounds.pos);
         logo.resize(worldBounds);

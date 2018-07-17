@@ -13,6 +13,9 @@ public abstract class Sprite extends Rect {
     protected int frame;
     private boolean isDestroyed;
 
+    private static float changeX = 1f;
+    protected static Rect worldBounds = new Rect();
+
     protected Sprite() {
     }
 
@@ -83,9 +86,12 @@ public abstract class Sprite extends Rect {
     }
 
     public void resize(Rect worldBounds) {
+        changeX = Sprite.worldBounds.getWidth();
+        Sprite.worldBounds.set(worldBounds);
     }
 
     public void resize(Rect worldBounds, int k) {
+        resize(worldBounds);
     }
 
     public boolean touchDown(Vector2 touch, int pointer) {
@@ -124,5 +130,9 @@ public abstract class Sprite extends Rect {
 
     public boolean isDestroyed() {
         return isDestroyed;
+    }
+
+    protected float getChangeX() {
+        return changeX;
     }
 }

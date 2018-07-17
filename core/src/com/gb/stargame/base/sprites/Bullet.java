@@ -34,6 +34,10 @@ public class Bullet extends Sprite {
         }
     }
 
+    public void stop() {
+        speed.set(0, 0);
+    }
+
     public int getDamage() {
         return damage;
     }

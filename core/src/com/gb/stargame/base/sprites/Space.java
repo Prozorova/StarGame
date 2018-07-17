@@ -10,12 +10,9 @@ import com.gb.stargame.base.math.Rect;
 public class Space extends Sprite {
     private TextureRegion[] regionsStar;
     private Star[] stars;
-    private Rect worldBounds;
-    private float changeX;
 
-    public Space(TextureRegion textureSpace, Texture[] textureStar, Rect worldBounds) {
+    public Space(TextureRegion textureSpace, Texture[] textureStar) {
         super(textureSpace);
-        this.worldBounds = worldBounds;
         regionsStar = new TextureRegion[textureStar.length];
         for (int i = 0; i < textureStar.length; i++)
             regionsStar[i] = new TextureRegion(textureStar[i]);
@@ -33,8 +30,8 @@ public class Space extends Sprite {
 
         @Override
         public void resize(Rect worldBounds) {
-            pos.x = pos.x * worldBounds.getWidth() / changeX;
-            setHeightProportion(worldBounds.getWidth() * getHeight() / changeX);
+            pos.x = pos.x * worldBounds.getWidth() / getChangeX();
+            setHeightProportion(worldBounds.getWidth() * getHeight() / getChangeX());
         }
 
         @Override
@@ -61,6 +58,7 @@ public class Space extends Sprite {
 
     @Override
     public void resize(Rect worldBounds) {
+        super.resize(worldBounds);
         setHeightProportion(worldBounds.getHeight());
         pos.set(worldBounds.pos);
         if (stars == null) {
@@ -71,6 +69,5 @@ public class Space extends Sprite {
             for (Star star : stars) {
                 star.resize(worldBounds);
             }
-        changeX = worldBounds.getWidth();
     }
 }

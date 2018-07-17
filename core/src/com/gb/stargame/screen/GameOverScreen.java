@@ -14,6 +14,7 @@ public class GameOverScreen extends Base2DScreen implements ActionListener {
     private MainMenu mainMenu;
     private TextureAtlas atlas;
     private ScaledTouchUpButton toMainMenuButton;
+    private ScaledTouchUpButton newGameButton;
 
     @Override
     public void show() {
@@ -21,8 +22,10 @@ public class GameOverScreen extends Base2DScreen implements ActionListener {
         atlas = new TextureAtlas("gameOverAtlas.tpack");
         TextureRegion textureLabel = atlas.findRegion("GameOver");
         TextureRegion[] toMainMenu = {atlas.findRegion("MainMenuButton1"), atlas.findRegion("MainMenuButton2")};
+        TextureRegion[] toNewGame = {atlas.findRegion("NewGame1"), atlas.findRegion("NewGame2")};
         mainMenu = new MainMenu(new TextureRegion(textureSpace), textureLabel);
-        toMainMenuButton = new ScaledTouchUpButton(toMainMenu, this, MenuScreen.PRESS_SCALE);
+        toMainMenuButton = new ScaledTouchUpButton(toMainMenu, this, PRESS_SCALE);
+        newGameButton = new ScaledTouchUpButton(toNewGame, this, PRESS_SCALE);
     }
 
     @Override
@@ -38,30 +41,35 @@ public class GameOverScreen extends Base2DScreen implements ActionListener {
 
     private void draw() {
         toMainMenuButton.draw(batch);
+        newGameButton.draw(batch);
     }
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
         mainMenu.resize(worldBounds);
-        toMainMenuButton.resize(worldBounds);
+        toMainMenuButton.resize(worldBounds, 3);
+        newGameButton.resize(worldBounds, 2);
     }
 
     @Override
     public void touchDown(Vector2 touch, int pointer) {
         super.touchDown(touch, pointer);
         toMainMenuButton.touchDown(touch, pointer);
+        newGameButton.touchDown(touch, pointer);
     }
 
     @Override
     public void touchUp(Vector2 touch, int pointer) {
         super.touchUp(touch, pointer);
         toMainMenuButton.touchUp(touch, pointer);
+        newGameButton.touchUp(touch, pointer);
     }
 
     @Override
     public void mouseMoved(Vector2 v) {
         toMainMenuButton.mouseMoved(v);
+        newGameButton.mouseMoved(v);
     }
 
     @Override
@@ -72,5 +80,8 @@ public class GameOverScreen extends Base2DScreen implements ActionListener {
     @Override
     public void actionPerformed(Object src) {
         if (src == toMainMenuButton)
-            screenManager.switchScreens(ScreenManager.ScreenType.MENU);    }
+            screenManager.switchScreens(ScreenManager.ScreenType.MENU);
+        else if (src == newGameButton){
+            screenManager.switchScreens(ScreenManager.ScreenType.GAME);}
+    }
 }

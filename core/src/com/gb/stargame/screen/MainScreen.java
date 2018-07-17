@@ -16,10 +16,13 @@ public class MainScreen extends Base2DScreen {
     private StarShip ship;
     private Texture[] textureStar;
     private Texture textureFire;
+    private Texture textureRepTool;
     private FireButton fireButton;
     private TextureRegion[] enemyTexture;
     private TextureRegion bulletTexture;
     private TextureAtlas atlas;
+    private StarShipHP starShipHP;
+    private TextureAtlas atlasHP;
     private boolean pressedLeft;
     private boolean pressedRight;
     private boolean pressedUp;
@@ -28,7 +31,13 @@ public class MainScreen extends Base2DScreen {
 
     private BulletPool bulletPool;
     private EnemyPool enemyPool;
+    private ExplosionPool explosionPool;
+    private RepairToolPool repairToolPool;
     private EnemiesEmitter enemies;
+
+    private float freezeInterval = 4f;
+    private float freezeTimer;
+    private boolean isFinished;
 
     @Override
     public void show() {
@@ -36,18 +45,28 @@ public class MainScreen extends Base2DScreen {
         textureFire = new Texture("fireButton.png");
         fireButton = new FireButton(new TextureRegion(textureFire));
         textureStar = new Texture[]{new Texture("starBlue.png"), new Texture("starYellow.png")};
-        space = new Space(new TextureRegion(textureSpace), textureStar, worldBounds);
+        space = new Space(new TextureRegion(textureSpace), textureStar);
         atlas = new TextureAtlas("mainAtlas.tpack");
         sounds = new Sound[]{Gdx.audio.newSound(Gdx.files.internal("Sounds/playerShip.wav")), Gdx.audio.newSound(Gdx.files.internal("Sounds/smallEnemy.wav")),
-                Gdx.audio.newSound(Gdx.files.internal("Sounds/mediumEnemy.wav")), Gdx.audio.newSound(Gdx.files.internal("Sounds/largeEnemy.wav"))};
-        ship = new StarShip(atlas.findRegion("main_ship"), atlas.findRegion("bulletMainShip"), sounds[0], worldBounds, autoFire);
+                Gdx.audio.newSound(Gdx.files.internal("Sounds/mediumEnemy.wav")), Gdx.audio.newSound(Gdx.files.internal("Sounds/largeEnemy.wav")),
+                Gdx.audio.newSound(Gdx.files.internal("Sounds/explosion.wav"))};
+        ship = new StarShip(atlas.findRegion("main_ship"), atlas.findRegion("bulletMainShip"), sounds[0], worldBounds, autoFire, 150 - maxEnemyHP);
         enemyTexture = new TextureRegion[]{atlas.findRegion("enemy0"),     // маленький корабль
                 atlas.findRegion("enemy1"),                                // средний
                 atlas.findRegion("enemy2")};                               // большой
         bulletTexture = new TextureRegion(atlas.findRegion("bulletEnemy"));
-        enemies = new EnemiesEmitter(enemyTexture, bulletTexture, sounds, worldBounds);
+        enemies = new EnemiesEmitter(enemyTexture, bulletTexture, maxEnemyHP, sounds, worldBounds);
         bulletPool = BulletPool.getInstance();
         enemyPool = EnemyPool.getInstance();
+        explosionPool = ExplosionPool.getInstance();
+        explosionPool.set(sounds[4], atlas.findRegion("explosion"));
+        repairToolPool = RepairToolPool.getInstance();
+        textureRepTool = new Texture("repTool.png");
+        repairToolPool.setTexture(new TextureRegion(textureRepTool));
+        atlasHP = new TextureAtlas("atlasHP.tpack");
+        starShipHP = new StarShipHP(new TextureRegion(atlasHP.findRegion("hp100")));
+        isFinished = false;
+        freezeTimer = 0f;
     }
 
     @Override
@@ -56,12 +75,22 @@ public class MainScreen extends Base2DScreen {
         space.resize(worldBounds);
         ship.resize(worldBounds);
         fireButton.resize(worldBounds);
-//        enemies.resize(worldBounds);
+        starShipHP.resize(worldBounds);
+        for (EnemyShip enemy : enemyPool.getActiveObjects()) {
+            enemy.resize(worldBounds);
+        }
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
+        if (isFinished) {
+            freezeTimer += delta;
+            if (freezeTimer >= freezeInterval) {
+                freezeTimer = 0f;
+                screenManager.switchScreens(ScreenManager.ScreenType.GAMEOVER);
+            }
+        }
         update(delta);
         checkCollisions();
         deleteAllDestroyed();
@@ -75,8 +104,11 @@ public class MainScreen extends Base2DScreen {
         space.draw(batch);
         bulletPool.drawActiveSprites(batch);
         enemyPool.drawActiveSprites(batch);
-        ship.draw(batch);
+        if (!ship.isDestroyed()) ship.draw(batch);
+        repairToolPool.drawActiveSprites(batch);
+        explosionPool.drawActiveSprites(batch);
         if (!autoFire) fireButton.draw(batch);
+        starShipHP.draw(batch);
         batch.end();
     }
 
@@ -84,18 +116,37 @@ public class MainScreen extends Base2DScreen {
         ship.update(delta);
         bulletPool.updateActiveSprites(delta);
         enemyPool.updateActiveSprites(delta);
+        explosionPool.updateActiveSprites(delta);
+        repairToolPool.updateActiveSprites(delta);
         enemies.generateEnemies(delta);
+        repairToolPool.generateRepTools(delta);
     }
 
     private void checkCollisions() {
-        if (enemies.checkCollisions(ship))
-            screenManager.switchScreens(ScreenManager.ScreenType.GAMEOVER);
-        bulletPool.checkCollisions(ship);
+        if (!isFinished) {
+            bulletPool.checkCollisions(ship);
+            if (enemies.checkCollisions(ship) || ship.isDestroyed()) {
+                ship.stop();
+                for (EnemyShip enemy : enemyPool.getActiveObjects()) enemy.stop();
+                for (Bullet bullet : bulletPool.getActiveObjects()) bullet.stop();
+                for (RepairTool repairTool : repairToolPool.getActiveObjects()) repairTool.stop();
+                enemies.stopGenerating();
+                enemyPool.stopShooting();
+                repairToolPool.stopGenerating();
+                isFinished = true;
+            }
+            if (repairToolPool.checkCollisions(ship)) ship.addHP();
+        }
+        if (ship.getHp() > 0)
+            starShipHP.set(ship.getHp() * 100 / ship.getMaxHP());
+        else starShipHP.set(0);
     }
 
     private void deleteAllDestroyed() {
         bulletPool.freeAllDestroyedActiveSprites();
         enemyPool.freeAllDestroyedActiveSprites();
+        explosionPool.freeAllDestroyedActiveSprites();
+        repairToolPool.freeAllDestroyedActiveSprites();
     }
 
     @Override
@@ -189,11 +240,15 @@ public class MainScreen extends Base2DScreen {
     @Override
     public void dispose() {
         textureFire.dispose();
+        textureRepTool.dispose();
         bulletPool.dispose();
         enemyPool.dispose();
+        explosionPool.dispose();
+        repairToolPool.dispose();
         for (Sound s : sounds)
             s.dispose();
         atlas.dispose();
+        atlasHP.dispose();
         for (Texture txt : textureStar) txt.dispose();
     }
 
@@ -235,6 +290,24 @@ public class MainScreen extends Base2DScreen {
             this.setBottom(worldBounds.getBottom());
             if (fireButtonPlace) this.setLeft(worldBounds.getLeft());
             else this.setRight(worldBounds.getRight());
+        }
+    }
+
+    private class StarShipHP extends Sprite {
+
+        StarShipHP(TextureRegion tReg) {
+            super(tReg);
+        }
+
+        public void set(int rate) {
+            regions[0] = atlasHP.findRegion("hp" + rate);
+        }
+
+        @Override
+        public void resize(Rect worldBounds) {
+            setHeightProportion(worldBounds.getHeight() * 0.1f);
+            this.setTop(worldBounds.getTop());
+            this.setRight(worldBounds.getRight());
         }
     }
 }

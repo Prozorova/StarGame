@@ -19,7 +19,21 @@ MainMenuButton1
   index: -1
 MainMenuButton2
   rotate: false
+  xy: 510, 164
+  size: 500, 75
+  orig: 500, 75
+  offset: 0, 0
+  index: -1
+NewGame1
+  rotate: false
   xy: 1, 1
+  size: 500, 75
+  orig: 500, 75
+  offset: 0, 0
+  index: -1
+NewGame2
+  rotate: false
+  xy: 510, 87
   size: 500, 75
   orig: 500, 75
   offset: 0, 0

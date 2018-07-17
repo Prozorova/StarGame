@@ -18,8 +18,9 @@ public class StarShip extends Ship {
     private boolean braking;
     private boolean autoFire;
     private boolean fire;
+    private int maxHP;
 
-    public StarShip(TextureRegion tShip, TextureRegion tBullet, Sound shotSound, Rect worldBounds, boolean autoFire) {
+    public StarShip(TextureRegion tShip, TextureRegion tBullet, Sound shotSound, Rect worldBounds, boolean autoFire, int hp) {
         super(tShip, 1, 2, 2, worldBounds);
         this.bulletRegion = tBullet;
         this.bulletHeight = 0.01f;
@@ -34,10 +35,10 @@ public class StarShip extends Ship {
         buff = new Vector2();
         coef = 0.0003f;
         checkSpeed = new Vector2(100, 100);
-        health = 100;
+        this.hp = this.maxHP = hp;
         this.autoFire = autoFire;
         fire = false;
-        hitBox = new ShipShape(this.pos, this.getWidth(), this.getHeight(), ShipShape.HitBoxTypes.PLAYER);
+        hitBox = new ShipShape(this.getWidth(), this.getHeight(), ShipShape.HitBoxTypes.PLAYER);
     }
 
     @Override
@@ -80,6 +81,7 @@ public class StarShip extends Ship {
 
     @Override
     public void update(float d) {
+        super.update(d);
         if (autoFire || fire) {
             reloadTimer += d;
             if (reloadTimer >= reloadInterval) {
@@ -167,14 +169,45 @@ public class StarShip extends Ship {
         fire = false;
     }
 
+    public void impact() {
+        movingY = false;
+        movingX = false;
+        touchPosition.set(-1, -100);
+        speed.x *= -1;
+        delta.set(speed).scl(-0.03f);
+        checkSpeed.set(speed);
+    }
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public void addHP() {
+        hp += getMaxHP() / 10;
+    }
+
     public enum Direction {LEFT, RIGHT, UP, DOWN}
 
     @Override
+    public void destroy() {
+        super.destroy();
+        hp = 0;
+    }
+
+    @Override
     public void resize(Rect worldBounds) {
-        super.resize(worldBounds);
-        pos.x = pos.x * worldBounds.getWidth() / changeX;
+        pos.x = pos.x * worldBounds.getWidth() / getChangeX();
         setHeightProportion(worldBounds.getHeight() * 0.1f);
         maxSpeed = 0.01f;
-        hitBox = new ShipShape(this.pos, this.getWidth(), this.getHeight(), ShipShape.HitBoxTypes.PLAYER);
+        hitBox = new ShipShape(this.getWidth(), this.getHeight(), ShipShape.HitBoxTypes.PLAYER);
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
+        movingY = false;
+        movingX = false;
+        touchPosition.set(-1, -100);
+        delta.set(0, 0);
     }
 }

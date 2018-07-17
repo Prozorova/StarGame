@@ -8,25 +8,26 @@ public class ShipShape extends Rect {
 
     public enum HitBoxTypes {PLAYER, SMALL_ENEMY, MEDIUM_ENEMY, LARGE_ENEMY}
 
-    public ShipShape(Vector2 pos, float width, float height, HitBoxTypes type) {
+    public ShipShape(float width, float height, HitBoxTypes type) {
         super();
+        Vector2 pos = new Vector2(100f, 100f);
         switch (type) {
             case PLAYER:
-                part1 = new Rect(pos.x, pos.y - height / 4, width / 2, height / 4);
-                part2 = new Rect(pos.x, pos.y + height / 4, width / 8, height / 4);
+                part1 = new Rect(pos.x, pos.y , width / 2, height / 4);
+                part2 = new Rect(pos.x, pos.y , width / 8, height / 4);
                 break;
             case SMALL_ENEMY:
-                part1 = new Rect(pos.x, pos.y + height / 4, width / 2, height / 4);
-                part2 = new Rect(pos.x, pos.y - height / 4, width / 4, height / 4);
+                part1 = new Rect(pos.x, pos.y , width / 2, height / 4);
+                part2 = new Rect(pos.x, pos.y , width / 4, height / 4);
                 break;
             case MEDIUM_ENEMY:
-                part1 = new Rect(pos.x, pos.y + height / 4, width / 2, height / 4);
-                part2 = new Rect(pos.x, pos.y - height / 4, width / 8, height / 4);
+                part1 = new Rect(pos.x, pos.y , width / 2, height / 4);
+                part2 = new Rect(pos.x, pos.y , width / 8, height / 4);
                 break;
             case LARGE_ENEMY:
-                part1 = new Rect(pos.x, pos.y + height / 8, width / 2, height * 0.375f);
-                part2 = new Rect(pos.x - width * 0.375f, pos.y - height * 0.375f, width / 8, height / 8);
-                part3 = new Rect(pos.x + width * 0.375f, pos.y - height * 0.375f, width / 8, height / 8);
+                part1 = new Rect(pos.x, pos.y , width / 2, height * 0.375f);
+                part2 = new Rect(pos.x , pos.y , width / 8, height / 8);
+                part3 = new Rect(pos.x , pos.y , width / 8, height / 8);
                 break;
         }
         this.type = type;
@@ -56,5 +57,13 @@ public class ShipShape extends Rect {
         boolean isPart3 = true;
         if (part3 != null) isPart3 = part3.isOutside(other);
         return part1.isOutside(other) && part2.isOutside(other) && isPart3;
+    }
+
+    public HitBoxTypes getType(){
+        return type;
+    }
+
+    public Rect getPart1(){
+        return part1;
     }
 }

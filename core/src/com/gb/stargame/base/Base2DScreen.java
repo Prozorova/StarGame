@@ -18,13 +18,17 @@ public abstract class Base2DScreen implements Screen, InputProcessor {
 
     private Vector2 touch = new Vector2();
 
+    protected static final float PRESS_SCALE = 0.9f;
     protected static ScreenManager screenManager = ScreenManager.getInstance();
     protected static SpriteBatch batch = new SpriteBatch();
     protected static Music music = Gdx.audio.newMusic(Gdx.files.internal("backgroundMusic.mp3"));
     protected static Texture textureSpace = new Texture("galaxy-st.jpg");
 
+    // ПАРАМЕТРЫ ДЛЯ МЕНЮ OPTIONS
     protected static boolean autoFire = false;                          // автоогонь - будет включаться в настройках
     protected static boolean fireButtonPlace = false;                   // справа - false, слева - true
+    protected static int maxEnemyHP = 50;                               // один из параметров сложности: от него считаем все хп
+    public static boolean shipReturn = true;                            // один из параметров сложности: если враг не уничтожен - он возвращается в игру
 
     public Base2DScreen() {
         music.setVolume(0.3f);

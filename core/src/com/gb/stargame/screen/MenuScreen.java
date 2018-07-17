@@ -14,7 +14,6 @@ public class MenuScreen extends Base2DScreen implements ActionListener {
     private MainMenu mainMenu;
     private TextureAtlas atlas;
 
-    static final float PRESS_SCALE = 0.9f;
     private static final int BUTTON_AMOUNT = 4;
 
     private ScaledTouchUpButton[] buttons = new ScaledTouchUpButton[BUTTON_AMOUNT];

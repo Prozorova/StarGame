@@ -14,4 +14,12 @@ public class EnemyPool extends SpritesPool<EnemyShip> {
     protected EnemyShip newObject() {
         return new EnemyShip();
     }
+
+    public void stopShooting() {
+        for (EnemyShip enemy : getActiveObjects()) {
+            enemy.changeState();
+        }
+    }
 }
+
+
