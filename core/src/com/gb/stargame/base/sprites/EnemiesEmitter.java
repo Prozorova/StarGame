@@ -22,9 +22,13 @@ public class EnemiesEmitter {
     private float generateTimer;
     private EnemyPool enemyPool;
     private BulletPool bulletPool;
+    private int stage;
+    private int score;
 
     public EnemiesEmitter(TextureRegion[] enemyTexture, TextureRegion bulletEnemy, int maxHP, Sound[] sounds, Rect worldBounds) {
         this.worldBounds = worldBounds;
+        stage = 1;
+        score = 0;
         enemyPool = EnemyPool.getInstance();
         bulletPool = BulletPool.getInstance();
         SMALL_ENEMY_SHIP = new EnemyShip();
@@ -39,6 +43,7 @@ public class EnemiesEmitter {
     }
 
     public void generateEnemies(float delta) {
+        stage += score / (stage * stage * 10);
         generateTimer += delta;
         if (generateTimer >= generateInterval) {
             generateTimer = 0f;
@@ -51,7 +56,7 @@ public class EnemiesEmitter {
         }
     }
 
-    private EnemyShip cloneShip(EnemyShip ship, Type type) {
+    private void cloneShip(EnemyShip ship, Type type) {
         Ship enemy;
         switch (type) {
             case SMALL_ENEMY:
@@ -67,9 +72,9 @@ public class EnemiesEmitter {
                 ship.speed = new Vector2(0, -MathUtils.random(0.05f, 0.09f));
                 break;
         }
-        ship.set(enemy.regions, enemy.bulletRegion, enemy.bulletHeight, enemy.bulletV, enemy.bulletDamage, enemy.reloadInterval,
+        ship.set(enemy.regions, enemy.bulletRegion, enemy.bulletHeight, enemy.bulletV, enemy.bulletDamage * stage, enemy.reloadInterval,
                 enemy.getHeight(), enemy.hp, enemy.shotSound, enemy.hitBox.getType());
-        return ship;
+        ship.score = ship.bulletDamage;
     }
 
     public boolean checkCollisions(StarShip ship) {
@@ -97,11 +102,21 @@ public class EnemiesEmitter {
                             break;
                     }
                 }
+                if (enemyShip.isDestroyed())
+                    score += enemyShip.getScore();
             }
         return result;
     }
 
     public void stopGenerating() {
         generateInterval = 1000f;
+    }
+
+    public int getStage() {
+        return stage;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

@@ -51,7 +51,7 @@ public class ScreenManager {
                 game.setScreen(initNewScreen(MainScreen.class));
                 break;
             case OPTIONS:
-//                game.setScreen(initNewScreen(MenuScreen.class));
+                game.setScreen(initNewScreen(OptionsScreen.class));
                 break;
             case SCORE:
 //                game.setScreen(initNewScreen(MenuScreen.class));

@@ -184,6 +184,7 @@ public class StarShip extends Ship {
 
     public void addHP() {
         hp += getMaxHP() / 10;
+        if (hp > getMaxHP()) hp = getMaxHP();
     }
 
     public enum Direction {LEFT, RIGHT, UP, DOWN}
@@ -209,5 +210,6 @@ public class StarShip extends Ship {
         movingX = false;
         touchPosition.set(-1, -100);
         delta.set(0, 0);
+        this.reloadInterval =1000f;
     }
 }

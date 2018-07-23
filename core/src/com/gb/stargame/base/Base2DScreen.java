@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.*;
 import com.gb.stargame.base.math.*;
+import com.gb.stargame.base.utils.Font;
 
 public abstract class Base2DScreen implements Screen, InputProcessor {
     private final float coordY = 1f;
@@ -24,16 +25,24 @@ public abstract class Base2DScreen implements Screen, InputProcessor {
     protected static Music music = Gdx.audio.newMusic(Gdx.files.internal("backgroundMusic.mp3"));
     protected static Texture textureSpace = new Texture("galaxy-st.jpg");
 
+    protected static final float FONT_SIZE = 0.02f;
+    protected Font font;
+
     // ПАРАМЕТРЫ ДЛЯ МЕНЮ OPTIONS
     protected static boolean autoFire = false;                          // автоогонь - будет включаться в настройках
     protected static boolean fireButtonPlace = false;                   // справа - false, слева - true
     protected static int maxEnemyHP = 50;                               // один из параметров сложности: от него считаем все хп
-    public static boolean shipReturn = true;                            // один из параметров сложности: если враг не уничтожен - он возвращается в игру
+    public static boolean shipReturn = false;                            // один из параметров сложности: если враг не уничтожен - он возвращается в игру
+    protected static boolean musicON = true;
+    protected static boolean soundON = true;
+
 
     public Base2DScreen() {
-        music.setVolume(0.3f);
-        music.play();
-        music.setLooping(true);
+        if (musicON) {
+            music.setVolume(0.3f);
+            music.play();
+            music.setLooping(true);
+        }
         screenBounds = new Rect();
         worldBounds = new Rect();
         glBounds = new Rect(0, 0, 1f, 1f);
@@ -44,6 +53,8 @@ public abstract class Base2DScreen implements Screen, InputProcessor {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(this);
+        font = new Font("font/font.fnt", "font/font.png");
+        font.setWorldSize(FONT_SIZE);
     }
 
     @Override
@@ -87,6 +98,7 @@ public abstract class Base2DScreen implements Screen, InputProcessor {
     public void dispose() {
         textureSpace.dispose();
         music.dispose();
+        font.dispose();
         batch.dispose();
     }
 
@@ -113,7 +125,6 @@ public abstract class Base2DScreen implements Screen, InputProcessor {
     }
 
     public void touchDown(Vector2 touch, int pointer) {
-        System.out.println("touchDown X=" + touch.x + " Y=" + touch.y);
     }
 
     @Override
@@ -124,7 +135,6 @@ public abstract class Base2DScreen implements Screen, InputProcessor {
     }
 
     public void touchUp(Vector2 touch, int pointer) {
-        System.out.println("touchUp X=" + touch.x + " Y=" + touch.y);
     }
 
     @Override
@@ -135,7 +145,6 @@ public abstract class Base2DScreen implements Screen, InputProcessor {
     }
 
     private void touchDragged(Vector2 touch, int pointer) {
-        System.out.println("touchDragged X=" + touch.x + " Y=" + touch.y);
     }
 
     @Override

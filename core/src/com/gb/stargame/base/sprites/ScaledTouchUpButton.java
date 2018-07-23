@@ -12,6 +12,13 @@ public class ScaledTouchUpButton extends Sprite {
     private float pressScale;
     private ActionListener actionListener;
 
+    public ScaledTouchUpButton(TextureRegion[] region, ActionListener actionListener) {
+        super(region);
+        pressScale = 1;
+        this.actionListener = actionListener;
+        this.pressed = false;
+    }
+
     public ScaledTouchUpButton(TextureRegion[] region, ActionListener actionListener, float pressScale) {
         super(region);
         this.pressScale = pressScale;
@@ -43,6 +50,18 @@ public class ScaledTouchUpButton extends Sprite {
         this.scale = 1f;
     }
 
+    public int touchUp(Vector2 touch) {
+        if (isMe(touch)) {
+            float k = getWidth() / 4;
+            if (touch.x <= getLeft() + k / 2) return 1;
+            if (touch.x <= getLeft() + k * 1.5f) return 2;
+            if (touch.x <= getLeft() + k * 2.5f) return 3;
+            if (touch.x <= getLeft() + k * 3.5f) return 4;
+            return 5;
+        }
+        return 0;
+    }
+
     public void mouseMoved(Vector2 v) {
         if (isMe(v)) setColor(1);
         else setColor(0);
@@ -60,7 +79,11 @@ public class ScaledTouchUpButton extends Sprite {
         pos.set(0f, -0.3f);
     }
 
-    private void setColor(int i) {
+    public void setColor(int i) {
         frame = i;
+    }
+
+    public int getColor(){
+        return frame;
     }
 }

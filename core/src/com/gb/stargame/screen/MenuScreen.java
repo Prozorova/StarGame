@@ -89,6 +89,8 @@ public class MenuScreen extends Base2DScreen implements ActionListener {
             Gdx.app.exit();
         } else if (src == buttons[0]) {
             screenManager.switchScreens(ScreenManager.ScreenType.GAME);
+        } else if (src == buttons[2]) {
+            screenManager.switchScreens(ScreenManager.ScreenType.OPTIONS);
         } else {
             System.out.println("Пока нет реализации");
 //            throw new RuntimeException("Unknown src");

@@ -42,15 +42,7 @@ public class Bullet extends Sprite {
         return damage;
     }
 
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
     public Object getOwner() {
         return owner;
-    }
-
-    public void setOwner(Ship owner) {
-        this.owner = owner;
     }
 }

@@ -16,7 +16,7 @@ public class BulletPool extends SpritesPool<Bullet> {
         return new Bullet();
     }
 
-    public void checkCollisions(Ship ship){
+    public void checkCollisions(Ship ship) {
         for (int i = 0; i < activeObjects.size(); i++) {
             Bullet bullet = activeObjects.get(i);
             if (!ship.hitBox.isOutside(bullet) && bullet.getOwner() != ship) {

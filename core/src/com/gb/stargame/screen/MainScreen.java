@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 import com.gb.stargame.base.*;
 import com.gb.stargame.base.Sprite;
 import com.gb.stargame.base.math.Rect;
@@ -35,6 +36,9 @@ public class MainScreen extends Base2DScreen {
     private RepairToolPool repairToolPool;
     private EnemiesEmitter enemies;
 
+    private StringBuilder sbFrags = new StringBuilder();
+    private StringBuilder sbStage = new StringBuilder();
+
     private float freezeInterval = 4f;
     private float freezeTimer;
     private boolean isFinished;
@@ -47,10 +51,17 @@ public class MainScreen extends Base2DScreen {
         textureStar = new Texture[]{new Texture("starBlue.png"), new Texture("starYellow.png")};
         space = new Space(new TextureRegion(textureSpace), textureStar);
         atlas = new TextureAtlas("mainAtlas.tpack");
-        sounds = new Sound[]{Gdx.audio.newSound(Gdx.files.internal("Sounds/playerShip.wav")), Gdx.audio.newSound(Gdx.files.internal("Sounds/smallEnemy.wav")),
-                Gdx.audio.newSound(Gdx.files.internal("Sounds/mediumEnemy.wav")), Gdx.audio.newSound(Gdx.files.internal("Sounds/largeEnemy.wav")),
-                Gdx.audio.newSound(Gdx.files.internal("Sounds/explosion.wav"))};
-        ship = new StarShip(atlas.findRegion("main_ship"), atlas.findRegion("bulletMainShip"), sounds[0], worldBounds, autoFire, 150 - maxEnemyHP);
+        if (soundON) {
+            sounds = new Sound[]{Gdx.audio.newSound(Gdx.files.internal("Sounds/playerShip.wav")), Gdx.audio.newSound(Gdx.files.internal("Sounds/smallEnemy.wav")),
+                    Gdx.audio.newSound(Gdx.files.internal("Sounds/mediumEnemy.wav")), Gdx.audio.newSound(Gdx.files.internal("Sounds/largeEnemy.wav")),
+                    Gdx.audio.newSound(Gdx.files.internal("Sounds/explosion.wav"))};
+        } else {
+            sounds = new Sound[5];
+            for (int i = 0; i < 5; i++) {
+                sounds[i] = Gdx.audio.newSound(Gdx.files.internal("Sounds/Void.wav"));
+            }
+        }
+            ship = new StarShip(atlas.findRegion("main_ship"), atlas.findRegion("bulletMainShip"), sounds[0], worldBounds, autoFire, 150 - maxEnemyHP);
         enemyTexture = new TextureRegion[]{atlas.findRegion("enemy0"),     // маленький корабль
                 atlas.findRegion("enemy1"),                                // средний
                 atlas.findRegion("enemy2")};                               // большой
@@ -109,6 +120,7 @@ public class MainScreen extends Base2DScreen {
         explosionPool.drawActiveSprites(batch);
         if (!autoFire) fireButton.draw(batch);
         starShipHP.draw(batch);
+        printInfo();
         batch.end();
     }
 
@@ -147,6 +159,13 @@ public class MainScreen extends Base2DScreen {
         enemyPool.freeAllDestroyedActiveSprites();
         explosionPool.freeAllDestroyedActiveSprites();
         repairToolPool.freeAllDestroyedActiveSprites();
+    }
+
+    private void printInfo() {
+        sbFrags.setLength(0);
+        sbStage.setLength(0);
+        font.draw(batch, sbFrags.append("Score: ").append(enemies.getScore()), worldBounds.getLeft(), worldBounds.getTop() - 0.01f);
+        font.draw(batch, sbStage.append("Stage: ").append(enemies.getStage()), worldBounds.pos.x, worldBounds.getTop() - 0.01f, Align.center);
     }
 
     @Override
@@ -249,6 +268,7 @@ public class MainScreen extends Base2DScreen {
             s.dispose();
         atlas.dispose();
         atlasHP.dispose();
+        font.dispose();
         for (Texture txt : textureStar) txt.dispose();
     }
 

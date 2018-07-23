@@ -25,6 +25,7 @@ public class Ship extends Sprite {
     protected float bulletV;
     protected float bulletHeight;
     protected int bulletDamage;
+    protected int score;
 
     protected float reloadInterval;
     protected float reloadTimer;
@@ -84,5 +85,9 @@ public class Ship extends Sprite {
 
     public void stop() {
         speed.set(0, 0);
+    }
+
+    public int getScore(){
+        return score;
     }
 }
